@@ -56,8 +56,8 @@ export function HeroShowcase({ slides, nowWatching }: HeroShowcaseProps) {
                 ))}
                 {/* Scrims: darken the left third for the copy, then melt the
                     whole thing into the page background at the bottom. */}
-                <div className="from-background/95 via-background/55 absolute inset-0 bg-gradient-to-r to-transparent" />
-                <div className="from-background absolute inset-0 bg-gradient-to-t via-transparent to-transparent" />
+                <div className="from-background/95 via-background/55 absolute inset-0 bg-linear-to-r to-transparent" />
+                <div className="from-background absolute inset-0 bg-linear-to-t via-transparent to-transparent" />
             </div>
 
             {/* Reserves the row the absolutely positioned header sits in. */}

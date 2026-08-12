@@ -83,8 +83,8 @@ export default function RootLayout({
                     padding clears the mobile tab bar, which is fixed. */}
                 {/* Underscores become spaces: CSS calc() requires whitespace
                     around `+`, and without it the whole declaration is dropped. */}
-                <div className="bg-background relative flex flex-1 flex-col pb-[calc(4rem_+_env(safe-area-inset-bottom))] lg:pb-0">
-                    <SiteHeader className="absolute inset-x-0 top-0 z-30" />
+                <div className="bg-background relative flex flex-1 flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
+                    <SiteHeader className="absolute inset-x-0 top-0 z-30 hidden lg:flex" />
                     {children}
                 </div>
                 <MobileNav />
