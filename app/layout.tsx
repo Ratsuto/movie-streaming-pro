@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono, Inter, Outfit } from 'next/font/google';
 import './globals.css';
@@ -5,6 +6,10 @@ import { THEME_COLOR } from './manifest';
 import { MobileNav } from '@/components/mobile-nav';
 import { ServiceWorker } from '@/components/service-worker';
 import { SiteHeader } from '@/components/site-header';
+import {
+    SiteHeaderAccount,
+    SiteHeaderAccountFallback,
+} from '@/components/site-header-account';
 import { cn } from '@/lib/utils';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -84,7 +89,16 @@ export default function RootLayout({
                 {/* Underscores become spaces: CSS calc() requires whitespace
                     around `+`, and without it the whole declaration is dropped. */}
                 <div className="bg-background relative flex flex-1 flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
-                    <SiteHeader className="absolute inset-x-0 top-0 z-30 hidden lg:flex" />
+                    {/* The session read lives inside the Suspense boundary so
+                        it can't delay the first byte of the page itself. */}
+                    <SiteHeader
+                        className="absolute inset-x-0 top-0 z-30 hidden lg:flex"
+                        account={
+                            <Suspense fallback={<SiteHeaderAccountFallback />}>
+                                <SiteHeaderAccount />
+                            </Suspense>
+                        }
+                    />
                     {children}
                 </div>
                 <MobileNav />

@@ -24,7 +24,10 @@ import {
     ItemTitle,
 } from '@/components/ui/item';
 import { Separator } from '@/components/ui/separator';
+import { logout } from '@/app/actions/auth';
+import { requireUser } from '@/lib/auth/session';
 import { nowWatching } from '@/lib/media';
+import { initialsOf } from '@/lib/utils';
 
 export const metadata: Metadata = {
     title: 'Profile — Movie Gather',
@@ -65,7 +68,11 @@ const settings = [
     },
 ];
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+    // `proxy.ts` already turns signed-out visitors away, but this is the check
+    // that actually guards the page — see lib/auth/session.ts.
+    const user = await requireUser('/profile');
+
     return (
         <>
             {/* Ambient wash so the page opens with colour behind the header,
@@ -86,20 +93,23 @@ export default function ProfilePage() {
                     <div className="flex items-center gap-4 sm:gap-5">
                         <Avatar className="size-16 ring-1 ring-white/15 sm:size-20">
                             <AvatarFallback className="bg-white/10 text-lg font-medium text-white">
-                                LP
+                                {initialsOf(user.name)}
                             </AvatarFallback>
                         </Avatar>
 
                         <div className="min-w-0">
-                            <h1 className="font-heading text-2xl leading-tight font-light tracking-tight text-white sm:text-3xl">
-                                Lee Phang
+                            <h1 className="font-heading truncate text-2xl leading-tight font-light tracking-tight text-white sm:text-3xl">
+                                {user.name}
                             </h1>
+                            <p className="text-muted-foreground mt-1 truncate text-sm">
+                                {user.email}
+                            </p>
                             <div className="mt-2 flex flex-wrap items-center gap-2">
                                 <Badge className="bg-primary/15 text-primary border-primary/25">
                                     Premium
                                 </Badge>
                                 <span className="text-muted-foreground text-xs">
-                                    Member since 2024
+                                    Member since {user.createdAt.getFullYear()}
                                 </span>
                             </div>
                         </div>
@@ -218,22 +228,26 @@ export default function ProfilePage() {
 
                         <Separator className="my-6 bg-white/10" />
 
-                        <Item
-                            render={<button type="button" />}
-                            className="text-destructive text-left hover:bg-white/5"
-                        >
-                            <ItemMedia
-                                variant="icon"
-                                className="bg-destructive/10 text-destructive size-9 rounded-full"
+                        {/* A plain form posting to a Server Action, so signing
+                            out works before hydration and without JavaScript. */}
+                        <form action={logout}>
+                            <Item
+                                render={<button type="submit" />}
+                                className="text-destructive w-full text-left hover:bg-white/5"
                             >
-                                <LogOutIcon />
-                            </ItemMedia>
-                            <ItemContent>
-                                <ItemTitle className="text-destructive">
-                                    Sign out
-                                </ItemTitle>
-                            </ItemContent>
-                        </Item>
+                                <ItemMedia
+                                    variant="icon"
+                                    className="bg-destructive/10 text-destructive size-9 rounded-full"
+                                >
+                                    <LogOutIcon />
+                                </ItemMedia>
+                                <ItemContent>
+                                    <ItemTitle className="text-destructive">
+                                        Sign out
+                                    </ItemTitle>
+                                </ItemContent>
+                            </Item>
+                        </form>
                     </section>
                 </div>
             </main>

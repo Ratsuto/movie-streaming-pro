@@ -2,43 +2,32 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-    BellIcon,
-    ChevronDownIcon,
-    MessageSquareIcon,
-    SearchIcon,
-} from 'lucide-react';
+import { BellIcon, MessageSquareIcon, SearchIcon } from 'lucide-react';
 
 import { InstallApp } from '@/components/install-app';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Wordmark } from '@/components/wordmark';
 import { Button } from '@/components/ui/button';
 import {
     InputGroup,
     InputGroupAddon,
     InputGroupInput,
 } from '@/components/ui/input-group';
-import { navigation } from '@/lib/navigation';
+import { isChromelessRoute, navigation } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
 
-function Wordmark() {
-    return (
-        <Link href="/home" className="group/logo block shrink-0 leading-none">
-            <span className="font-heading flex items-center text-base font-medium tracking-[0.28em] text-white uppercase">
-                M
-                <span className="border-primary/70 relative mx-[0.1em] inline-grid size-[0.7em] place-items-center rounded-full border">
-                    <span className="bg-primary size-[0.24em] rounded-full" />
-                </span>
-                VIE
-            </span>
-            <span className="mt-1.5 block text-[9px] tracking-[0.52em] text-white/45 uppercase">
-                Gather
-            </span>
-        </Link>
-    );
-}
-
-export function SiteHeader({ className }: { className?: string }) {
+export function SiteHeader({
+    className,
+    /** The account area, rendered on the server so it can read the session. */
+    account,
+}: {
+    className?: string;
+    account?: React.ReactNode;
+}) {
     const pathname = usePathname();
+
+    if (isChromelessRoute(pathname)) {
+        return null;
+    }
 
     return (
         <header
@@ -122,33 +111,7 @@ export function SiteHeader({ className }: { className?: string }) {
                     <span className="sr-only">Notifications</span>
                 </Button>
 
-                <div className="ml-1 flex items-center gap-2.5">
-                    <Link
-                        href="/profile"
-                        className="focus-visible:ring-ring/40 flex items-center gap-2.5 rounded-full outline-none focus-visible:ring-3"
-                    >
-                        <Avatar size="lg" className="ring-1 ring-white/15">
-                            <AvatarFallback className="bg-white/10 text-xs font-medium text-white">
-                                LP
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="hidden leading-tight sm:block">
-                            <p className="text-sm font-medium text-white">
-                                Lee Phang
-                            </p>
-                            <p className="text-primary/90 text-xs">Premium</p>
-                        </div>
-                        <span className="sr-only">Your profile</span>
-                    </Link>
-                    {/*<Button
-                        variant="outline"
-                        size="icon-sm"
-                        className="rounded-full border-white/15 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
-                    >
-                        <ChevronDownIcon />
-                        <span className="sr-only">Account menu</span>
-                    </Button>*/}
-                </div>
+                <div className="ml-1 flex items-center gap-2.5">{account}</div>
             </div>
         </header>
     );

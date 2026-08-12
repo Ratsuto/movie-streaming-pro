@@ -34,3 +34,14 @@ export const mobileNavigation = [
 ] as const;
 
 export type NavItem = (typeof mobileNavigation)[number];
+
+/**
+ * Routes that render without the site header and the mobile tab bar. The auth
+ * pages bring their own frame and shouldn't offer a way to wander off
+ * mid-signup, so the chrome checks this list and returns `null`.
+ */
+export const CHROMELESS_ROUTES = ['/login', '/register'] as const;
+
+export function isChromelessRoute(pathname: string): boolean {
+    return (CHROMELESS_ROUTES as readonly string[]).includes(pathname);
+}

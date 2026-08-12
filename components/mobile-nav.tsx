@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { mobileNavigation } from '@/lib/navigation';
+import { isChromelessRoute, mobileNavigation } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
 
 /**
@@ -16,6 +16,10 @@ import { cn } from '@/lib/utils';
  */
 export function MobileNav() {
     const pathname = usePathname();
+
+    if (isChromelessRoute(pathname)) {
+        return null;
+    }
 
     return (
         <nav
