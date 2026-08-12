@@ -10,6 +10,7 @@ import {
     SearchIcon,
 } from 'lucide-react';
 
+import { InstallApp } from '@/components/install-app';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -107,6 +108,8 @@ export function SiteHeader({ className }: { className?: string }) {
             </form>
 
             <div className="ml-auto flex items-center gap-1 lg:ml-0 lg:gap-2">
+                <InstallApp className="mr-1" />
+
                 <Button
                     variant="ghost"
                     size="icon"

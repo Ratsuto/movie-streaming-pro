@@ -1,6 +1,8 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono, Inter, Outfit } from 'next/font/google';
 import './globals.css';
+import { THEME_COLOR } from './manifest';
+import { ServiceWorker } from '@/components/service-worker';
 import { SiteHeader } from '@/components/site-header';
 import { cn } from '@/lib/utils';
 
@@ -19,9 +21,41 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+    applicationName: 'Movie Gather',
     title: 'Movie Gather — Stream movies and series',
     description:
         'Watch new releases, follow what everyone is streaming right now, and pick up your series where you left off.',
+    manifest: '/manifest.webmanifest',
+    appleWebApp: {
+        capable: true,
+        title: 'Movie Gather',
+        // Lets the dark page art run under the status bar on iOS.
+        statusBarStyle: 'black-translucent',
+    },
+    icons: {
+        icon: [
+            { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+            { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+        ],
+        apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
+    },
+    formatDetection: { telephone: false },
+    other: {
+        // Next emits the standardised `mobile-web-app-capable`, which iOS only
+        // honours from 17.4. Without the legacy name, older iPhones and iPads
+        // add the icon to the Home Screen but launch it inside Safari's chrome
+        // instead of as a standalone app.
+        'apple-mobile-web-app-capable': 'yes',
+    },
+};
+
+export const viewport: Viewport = {
+    themeColor: THEME_COLOR,
+    colorScheme: 'dark',
+    width: 'device-width',
+    initialScale: 1,
+    // Draws into the notch/home-indicator area once installed.
+    viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -49,6 +83,7 @@ export default function RootLayout({
                     <SiteHeader className="absolute inset-x-0 top-0 z-30" />
                     {children}
                 </div>
+                <ServiceWorker />
             </body>
         </html>
     );
