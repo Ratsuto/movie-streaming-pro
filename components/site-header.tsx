@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import {usePathname} from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
     BellIcon,
     ChevronDownIcon,
@@ -10,31 +10,29 @@ import {
     SearchIcon,
 } from 'lucide-react';
 
-import {Avatar, AvatarFallback} from '@/components/ui/avatar';
-import {Button} from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
     InputGroup,
     InputGroupAddon,
     InputGroupInput,
 } from '@/components/ui/input-group';
-import {cn} from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 const navigation = [
-    {label: 'Board', href: '/home', icon: FlameIcon},
-    {label: 'New', href: '/new'},
-    {label: 'Movies', href: '/movies'},
-    {label: 'Series', href: '/series'},
+    { label: 'Board', href: '/home', icon: FlameIcon },
+    { label: 'New', href: '/new' },
+    { label: 'Movies', href: '/movies' },
+    { label: 'Series', href: '/series' },
 ];
 
 function Wordmark() {
     return (
         <Link href="/home" className="group/logo block shrink-0 leading-none">
-            <span
-                className="font-heading flex items-center text-base font-medium tracking-[0.28em] text-white uppercase">
+            <span className="font-heading flex items-center text-base font-medium tracking-[0.28em] text-white uppercase">
                 M
-                <span
-                    className="border-primary/70 relative mx-[0.1em] inline-grid size-[0.7em] place-items-center rounded-full border">
-                    <span className="bg-primary size-[0.24em] rounded-full"/>
+                <span className="border-primary/70 relative mx-[0.1em] inline-grid size-[0.7em] place-items-center rounded-full border">
+                    <span className="bg-primary size-[0.24em] rounded-full" />
                 </span>
                 VIE
             </span>
@@ -45,7 +43,7 @@ function Wordmark() {
     );
 }
 
-export function SiteHeader({className}: { className?: string }) {
+export function SiteHeader({ className }: { className?: string }) {
     const pathname = usePathname();
 
     return (
@@ -55,10 +53,10 @@ export function SiteHeader({className}: { className?: string }) {
                 className
             )}
         >
-            <Wordmark/>
+            <Wordmark />
 
             <nav aria-label="Primary" className="hidden items-center md:flex">
-                {navigation.map(({label, href, icon: Icon}) => {
+                {navigation.map(({ label, href, icon: Icon }) => {
                     const isActive = pathname === href;
 
                     return (
@@ -103,7 +101,7 @@ export function SiteHeader({className}: { className?: string }) {
                         className="h-10"
                     />
                     <InputGroupAddon align="inline-end">
-                        <SearchIcon aria-hidden/>
+                        <SearchIcon aria-hidden />
                     </InputGroupAddon>
                 </InputGroup>
             </form>
@@ -114,7 +112,7 @@ export function SiteHeader({className}: { className?: string }) {
                     size="icon"
                     className="rounded-full text-white/70 hover:bg-white/10 hover:text-white"
                 >
-                    <MessageSquareIcon/>
+                    <MessageSquareIcon />
                     <span className="sr-only">Messages</span>
                 </Button>
                 <Button
@@ -122,8 +120,8 @@ export function SiteHeader({className}: { className?: string }) {
                     size="icon"
                     className="relative rounded-full text-white/70 hover:bg-white/10 hover:text-white"
                 >
-                    <BellIcon/>
-                    <span className="bg-primary absolute top-2 right-2 size-1.5 rounded-full"/>
+                    <BellIcon />
+                    <span className="bg-primary absolute top-2 right-2 size-1.5 rounded-full" />
                     <span className="sr-only">Notifications</span>
                 </Button>
 
@@ -144,7 +142,7 @@ export function SiteHeader({className}: { className?: string }) {
                         size="icon-sm"
                         className="rounded-full border-white/15 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
                     >
-                        <ChevronDownIcon/>
+                        <ChevronDownIcon />
                         <span className="sr-only">Account menu</span>
                     </Button>
                 </div>
