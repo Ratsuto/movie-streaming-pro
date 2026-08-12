@@ -69,7 +69,7 @@ export function CollectionView({
                     <MediaGrid
                         items={items}
                         showKind={kind === undefined}
-                        emptyLabel={emptyLabel}
+                        emptyDescription={`We have no ${emptyLabel} in this category right now. Try another one — the catalogue updates every week.`}
                     />
                 </div>
             </main>

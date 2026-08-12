@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { SearchXIcon } from 'lucide-react';
 
 import { MediaCard } from '@/components/media-card';
@@ -13,11 +14,18 @@ import type { Media } from '@/lib/media';
 type MediaGridProps = {
     items: Media[];
     showKind?: boolean;
-    /** Named in the empty state so the dead end explains itself. */
-    emptyLabel: string;
+    /**
+     * Shown when nothing matched. Supplied by the caller because a filtered
+     * category and a fruitless search are different dead ends.
+     */
+    emptyDescription: ReactNode;
 };
 
-export function MediaGrid({ items, showKind, emptyLabel }: MediaGridProps) {
+export function MediaGrid({
+    items,
+    showKind,
+    emptyDescription,
+}: MediaGridProps) {
     if (items.length === 0) {
         return (
             <Empty className="border border-dashed border-white/10 bg-white/2">
@@ -26,10 +34,7 @@ export function MediaGrid({ items, showKind, emptyLabel }: MediaGridProps) {
                         <SearchXIcon />
                     </EmptyMedia>
                     <EmptyTitle>Nothing here yet</EmptyTitle>
-                    <EmptyDescription>
-                        We have no {emptyLabel} in this category right now. Try
-                        another one — the catalogue updates every week.
-                    </EmptyDescription>
+                    <EmptyDescription>{emptyDescription}</EmptyDescription>
                 </EmptyHeader>
             </Empty>
         );

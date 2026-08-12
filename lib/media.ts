@@ -637,6 +637,39 @@ export function genresOf(items: Media[]): { genre: Genre; count: number }[] {
         );
 }
 
+/**
+ * Free-text search over titles and category names. Matching a whole word at
+ * the start of the title ranks above a match anywhere, so "the" surfaces
+ * "The Pitt" before "People we meet on vacation".
+ */
+export function search(query: string): Media[] {
+    const needle = query.trim().toLowerCase();
+    if (needle === '') return [];
+
+    return catalog
+        .map((item) => {
+            const title = item.title.toLowerCase();
+            const genreMatch = item.genres.some((genre) =>
+                GENRE_LABELS[genre].toLowerCase().includes(needle)
+            );
+
+            let score = 0;
+            if (title.startsWith(needle)) score = 3;
+            else if (title.includes(needle)) score = 2;
+            else if (genreMatch) score = 1;
+
+            return { item, score };
+        })
+        .filter((entry) => entry.score > 0)
+        .sort(
+            (a, b) =>
+                b.score - a.score ||
+                b.item.rating - a.item.rating ||
+                a.item.title.localeCompare(b.item.title)
+        )
+        .map((entry) => entry.item);
+}
+
 /** Same kind, sharing at least one genre, best rated first. */
 export function similarTo(item: Media, limit = 7): Media[] {
     return catalog

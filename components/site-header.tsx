@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import {
     BellIcon,
     ChevronDownIcon,
-    FlameIcon,
     MessageSquareIcon,
     SearchIcon,
 } from 'lucide-react';
@@ -18,14 +17,8 @@ import {
     InputGroupAddon,
     InputGroupInput,
 } from '@/components/ui/input-group';
+import { navigation } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
-
-const navigation = [
-    { label: 'Board', href: '/home', icon: FlameIcon },
-    { label: 'New', href: '/new' },
-    { label: 'Movies', href: '/movies' },
-    { label: 'Series', href: '/series' },
-];
 
 function Wordmark() {
     return (
@@ -56,7 +49,9 @@ export function SiteHeader({ className }: { className?: string }) {
         >
             <Wordmark />
 
-            <nav aria-label="Primary" className="hidden items-center md:flex">
+            {/* Below lg the bottom tab bar takes over, so only one primary
+                navigation is ever on screen. */}
+            <nav aria-label="Primary" className="hidden items-center lg:flex">
                 {navigation.map(({ label, href, icon: Icon }) => {
                     const isActive = pathname === href;
 
@@ -72,15 +67,12 @@ export function SiteHeader({ className }: { className?: string }) {
                                     : 'text-white/55 hover:text-white'
                             )}
                         >
-                            {Icon ? (
+                            {/* Only the active pill carries its icon — the
+                                inactive ones stay as plain text. */}
+                            {isActive ? (
                                 <Icon
                                     aria-hidden
-                                    className={cn(
-                                        'size-4',
-                                        isActive
-                                            ? 'text-primary'
-                                            : 'text-current'
-                                    )}
+                                    className="text-primary size-4"
                                 />
                             ) : null}
                             {label}
@@ -89,8 +81,10 @@ export function SiteHeader({ className }: { className?: string }) {
                 })}
             </nav>
 
+            {/* Submits to the same page the mobile Search tab opens. */}
             <form
                 role="search"
+                action="/search"
                 className="mx-auto hidden w-full max-w-xs lg:block"
             >
                 <InputGroup className="h-10 border-white/10 bg-white/8 backdrop-blur-sm">
@@ -129,17 +123,23 @@ export function SiteHeader({ className }: { className?: string }) {
                 </Button>
 
                 <div className="ml-1 flex items-center gap-2.5">
-                    <Avatar size="lg" className="ring-1 ring-white/15">
-                        <AvatarFallback className="bg-white/10 text-xs font-medium text-white">
-                            LP
-                        </AvatarFallback>
-                    </Avatar>
-                    <div className="hidden leading-tight sm:block">
-                        <p className="text-sm font-medium text-white">
-                            Lee Phang
-                        </p>
-                        <p className="text-primary/90 text-xs">Premium</p>
-                    </div>
+                    <Link
+                        href="/profile"
+                        className="focus-visible:ring-ring/40 flex items-center gap-2.5 rounded-full outline-none focus-visible:ring-3"
+                    >
+                        <Avatar size="lg" className="ring-1 ring-white/15">
+                            <AvatarFallback className="bg-white/10 text-xs font-medium text-white">
+                                LP
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="hidden leading-tight sm:block">
+                            <p className="text-sm font-medium text-white">
+                                Lee Phang
+                            </p>
+                            <p className="text-primary/90 text-xs">Premium</p>
+                        </div>
+                        <span className="sr-only">Your profile</span>
+                    </Link>
                     <Button
                         variant="outline"
                         size="icon-sm"

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono, Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import { THEME_COLOR } from './manifest';
+import { MobileNav } from '@/components/mobile-nav';
 import { ServiceWorker } from '@/components/service-worker';
 import { SiteHeader } from '@/components/site-header';
 import { cn } from '@/lib/utils';
@@ -78,11 +79,15 @@ export default function RootLayout({
         >
             <body className="flex min-h-full flex-col">
                 {/* The header floats over each page's banner artwork, so every
-                    route opens with a full-bleed image behind it. */}
-                <div className="bg-background relative flex flex-1 flex-col">
+                    route opens with a full-bleed image behind it. The bottom
+                    padding clears the mobile tab bar, which is fixed. */}
+                {/* Underscores become spaces: CSS calc() requires whitespace
+                    around `+`, and without it the whole declaration is dropped. */}
+                <div className="bg-background relative flex flex-1 flex-col pb-[calc(4rem_+_env(safe-area-inset-bottom))] lg:pb-0">
                     <SiteHeader className="absolute inset-x-0 top-0 z-30" />
                     {children}
                 </div>
+                <MobileNav />
                 <ServiceWorker />
             </body>
         </html>
