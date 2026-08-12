@@ -120,7 +120,7 @@ export default async function WatchPage({
             {/* Ambient wash behind the player, tinted to the title's artwork. */}
             <div
                 aria-hidden
-                className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[36rem]"
+                className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-144"
                 style={{
                     backgroundImage: `radial-gradient(70% 60% at 50% 0%, oklch(0.45 0.12 ${item.hue} / 0.5), transparent 70%)`,
                 }}
