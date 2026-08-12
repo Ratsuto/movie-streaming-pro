@@ -140,14 +140,14 @@ export function SiteHeader({ className }: { className?: string }) {
                         </div>
                         <span className="sr-only">Your profile</span>
                     </Link>
-                    <Button
+                    {/*<Button
                         variant="outline"
                         size="icon-sm"
                         className="rounded-full border-white/15 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
                     >
                         <ChevronDownIcon />
                         <span className="sr-only">Account menu</span>
-                    </Button>
+                    </Button>*/}
                 </div>
             </div>
         </header>
