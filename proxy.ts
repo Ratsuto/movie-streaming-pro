@@ -46,8 +46,10 @@ export function proxy(request: NextRequest) {
 
 export const config = {
     matcher: [
-        // Skip static assets and image optimisation; everything else is cheap
-        // enough since this only verifies an HMAC.
-        '/((?!api|_next/static|_next/image|favicon.ico|icons|sw.js|manifest.webmanifest).*)',
+        // Skip static assets, image optimisation and media; everything else is
+        // cheap enough since this only verifies an HMAC. `Video` is listed
+        // because playback issues a request per range seek, none of which
+        // should pay for it.
+        '/((?!api|_next/static|_next/image|favicon.ico|icons|Video|sw.js|manifest.webmanifest).*)',
     ],
 };

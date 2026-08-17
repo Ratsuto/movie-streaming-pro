@@ -4,7 +4,7 @@
  * Bump VERSION whenever this file changes — the old caches are dropped on
  * activate, so a new version never serves stale assets.
  */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL_CACHE = `mg-shell-${VERSION}`;
 const RUNTIME_CACHE = `mg-runtime-${VERSION}`;
 const OFFLINE_URL = '/offline';
@@ -116,6 +116,17 @@ self.addEventListener('fetch', (event) => {
 
     const url = new URL(request.url);
     if (url.origin !== self.location.origin) return;
+
+    // Media is fetched in ranges: `cache.put` rejects a 206, and a feature
+    // length file has no business inside a cache quota anyway. Seeking also
+    // depends on the browser's own range handling, so stay out of the way.
+    if (
+        request.destination === 'video' ||
+        request.destination === 'audio' ||
+        request.headers.has('range')
+    ) {
+        return;
+    }
 
     if (url.pathname.startsWith('/_next/static/')) {
         event.respondWith(cacheFirst(request));

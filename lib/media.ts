@@ -765,7 +765,9 @@ function mix(value: number): number {
     return x >>> 0;
 }
 
-function seedOf(...parts: (string | number)[]): number {
+/** A stable, well-spread number for any set of parts. Exported because the
+ * demo video sources in lib/video.ts pick a file the same way. */
+export function seedOf(...parts: (string | number)[]): number {
     return mix(hashString(parts.join(':')));
 }
 

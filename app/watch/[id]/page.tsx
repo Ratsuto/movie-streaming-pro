@@ -14,6 +14,7 @@ import {
     similarTo,
     type Season,
 } from '@/lib/media';
+import { videoSource } from '@/lib/video';
 
 type WatchPageProps = {
     params: Promise<{ id: string }>;
@@ -150,6 +151,7 @@ export default async function WatchPage({
                                 : `${item.year} · ${lengthLabel}`
                         }
                         hue={item.hue}
+                        source={videoSource(item.id, currentEpisode?.number)}
                         durationMinutes={
                             currentEpisode?.runtime ?? item.runtime ?? 100
                         }
