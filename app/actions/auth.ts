@@ -2,12 +2,8 @@
 
 import { redirect } from 'next/navigation';
 
+import { apiLogin, apiRegister, type ApiAuthResult } from '@/lib/auth/api';
 import { createSession, deleteSession } from '@/lib/auth/session';
-import {
-    createUser,
-    findUserByEmail,
-    verifyCredentials,
-} from '@/lib/auth/users';
 import {
     safeRedirectPath,
     validateLogin,
@@ -17,10 +13,23 @@ import {
 
 const DEFAULT_DESTINATION = '/home';
 
+/** Turns an API failure into the shape the forms render. */
+function toFormState(
+    result: Extract<ApiAuthResult, { ok: false }>,
+    values: Record<string, string>
+): AuthFormState {
+    return {
+        message: result.message,
+        errors: result.fieldErrors,
+        values,
+    };
+}
+
 export async function login(
     _prevState: AuthFormState | undefined,
     formData: FormData
 ): Promise<AuthFormState> {
+    // Checked here first so an obviously empty form never leaves the machine.
     const result = validateLogin(formData);
 
     if (!result.ok) {
@@ -28,18 +37,14 @@ export async function login(
     }
 
     const { email, password } = result.data;
-    const user = await verifyCredentials(email, password);
+    const outcome = await apiLogin(email, password);
 
-    if (!user) {
-        // One message for both a missing account and a wrong password, so the
-        // form can't be used to find out which emails are registered.
-        return {
-            message: 'That email and password combination is incorrect.',
-            values: { email },
-        };
+    if (!outcome.ok) {
+        // The email is safe to echo back; the password never is.
+        return toFormState(outcome, { email });
     }
 
-    await createSession(user.id);
+    await createSession(outcome.session);
 
     redirect(safeRedirectPath(formData.get('from'), DEFAULT_DESTINATION));
 }
@@ -55,24 +60,24 @@ export async function register(
     }
 
     const { name, email, password } = result.data;
+    // The form calls it `name`; the API calls it `fullName`.
+    const outcome = await apiRegister(name, email, password);
 
-    if (await findUserByEmail(email)) {
-        return {
-            errors: { email: ['An account already uses that email address.'] },
-            values: { name, email },
-        };
+    if (!outcome.ok) {
+        return toFormState(outcome, { name, email });
     }
-
-    const user = await createUser({ name, email, password });
 
     // Straight into the app rather than back to the login form — they just
     // proved who they are.
-    await createSession(user.id);
+    await createSession(outcome.session);
 
     redirect(safeRedirectPath(formData.get('from'), DEFAULT_DESTINATION));
 }
 
 export async function logout(): Promise<void> {
+    // Only the local cookie is cleared. The API has a /api/auth/logout
+    // endpoint, but its contract has not been confirmed, so calling it is left
+    // until the token it expects is known.
     await deleteSession();
 
     redirect('/login');

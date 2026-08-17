@@ -108,9 +108,15 @@ export default async function ProfilePage() {
                                 <Badge className="bg-primary/15 text-primary border-primary/25">
                                     Premium
                                 </Badge>
-                                <span className="text-muted-foreground text-xs">
-                                    Member since {user.createdAt.getFullYear()}
-                                </span>
+                                {/* Only shown when the API reports a join
+                                    date — better a missing line than an
+                                    invented one. */}
+                                {user.createdAt ? (
+                                    <span className="text-muted-foreground text-xs">
+                                        Member since{' '}
+                                        {user.createdAt.getFullYear()}
+                                    </span>
+                                ) : null}
                             </div>
                         </div>
                     </div>

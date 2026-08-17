@@ -2,7 +2,7 @@ import { cache } from 'react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { findUserById, type PublicUser } from '@/lib/auth/users';
+import type { ApiSession, SessionUser } from '@/lib/auth/api';
 import {
     createSessionToken,
     SESSION_COOKIE,
@@ -13,10 +13,22 @@ import {
 /**
  * Reading and writing the signed session cookie, plus the small data access
  * layer every server component and action should go through.
+ *
+ * The cookie carries everything a page needs about the visitor, so rendering
+ * never has to call the API again just to put a name in the header.
  */
 
-export async function createSession(userId: string): Promise<void> {
-    const { token, expiresAt } = createSessionToken(userId);
+export type { SessionUser };
+
+export async function createSession(session: ApiSession): Promise<void> {
+    const { token, expiresAt } = createSessionToken({
+        userId: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+        accessToken: session.accessToken,
+        refreshToken: session.refreshToken,
+        createdAt: session.user.createdAt?.getTime(),
+    });
     const cookieStore = await cookies();
 
     cookieStore.set(SESSION_COOKIE, token, {
@@ -42,18 +54,38 @@ export const getSession = cache(async (): Promise<SessionPayload | null> => {
     return verifySessionToken(cookieStore.get(SESSION_COOKIE)?.value);
 });
 
-export const getCurrentUser = cache(async (): Promise<PublicUser | null> => {
+export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
     const session = await getSession();
 
-    return session ? findUserById(session.userId) : null;
+    if (!session) {
+        return null;
+    }
+
+    return {
+        id: session.userId,
+        name: session.name,
+        email: session.email,
+        createdAt:
+            session.createdAt === undefined
+                ? undefined
+                : new Date(session.createdAt),
+    };
 });
+
+/**
+ * The API bearer token for the signed-in visitor, for calls made on their
+ * behalf. Server-side only — never hand this to a client component.
+ */
+export async function getAccessToken(): Promise<string | null> {
+    return (await getSession())?.accessToken ?? null;
+}
 
 /**
  * For pages and actions that have no meaning signed out. The `proxy.ts` check
  * is only an optimistic first pass — this is the one that actually guards the
  * data, so call it rather than trusting the redirect upstream.
  */
-export async function requireUser(returnTo?: string): Promise<PublicUser> {
+export async function requireUser(returnTo?: string): Promise<SessionUser> {
     const user = await getCurrentUser();
 
     if (!user) {

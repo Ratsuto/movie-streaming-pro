@@ -51,14 +51,6 @@ export default async function LoginPage({
             }
         >
             <LoginForm from={destination} />
-
-            {/* Accounts live in memory (see lib/auth/users.ts), so point at the
-                seeded one rather than leaving the form unusable. */}
-            <p className="text-muted-foreground mt-6 rounded-2xl border border-white/8 bg-white/4 px-4 py-3 text-xs leading-relaxed">
-                Demo account —{' '}
-                <span className="text-white/80">demo@moviegather.app</span> with
-                the password <span className="text-white/80">demo1234</span>.
-            </p>
         </AuthShell>
     );
 }
