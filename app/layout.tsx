@@ -92,7 +92,7 @@ export default function RootLayout({
                     {/* The session read lives inside the Suspense boundary so
                         it can't delay the first byte of the page itself. */}
                     <SiteHeader
-                        className="absolute inset-x-0 top-0 z-30 hidden lg:flex"
+                        className="inset-x-0 top-0 z-30 hidden lg:flex fixed bg-background/20 backdrop-blur-xl"
                         account={
                             <Suspense fallback={<SiteHeaderAccountFallback />}>
                                 <SiteHeaderAccount />

@@ -85,13 +85,19 @@ function jwtClaims(token: string): Json | undefined {
 }
 
 /**
- * Pulls a session out of whatever the login response looks like.
+ * Pulls a session out of the login response.
  *
- * The success shape has not been observed — that would have meant creating an
- * account on the live service — so this accepts the shapes Spring Boot JWT
- * setups commonly return, and falls back to the token's own claims for the
- * user's details. If the API returns something else, this function is the
- * only place that needs changing.
+ * The service returns a flat object, confirmed against the live API:
+ *
+ *   { accessToken, refreshToken, email, fullName, roles: string[] }
+ *
+ * There is no `id` field, so the user id falls back to the JWT's `sub` claim,
+ * which is the email address. `roles` is not carried into the session yet —
+ * add it here and to SessionPayload when something needs to authorise on it.
+ *
+ * The extra shapes below (nested `user`, a `data` wrapper, snake_case) cost
+ * nothing and mean a change on the backend is less likely to break sign-in.
+ * If the response ever changes, this function is the only place to edit.
  */
 function toSession(
     body: unknown,
